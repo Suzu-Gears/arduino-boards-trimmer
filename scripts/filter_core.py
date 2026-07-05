@@ -6,38 +6,59 @@ import os
 import tempfile
 import re
 import shutil
-
-TARGET_BOARDS = {
-    'rpipico',
-    'rpipicow',
-    'rpipico2',
-    'rpipico2w',
-    'seeed_xiao_rp2040',
-    'seeed_xiao_rp2350',
-    'vccgnd_yd_rp2040',
-    'waveshare_rp2040_zero',
-    'waveshare_rp2350_zero',
-    'generic',
-    'generic_rp2350'
-}
-MY_REPO = os.environ.get("GITHUB_REPOSITORY", "user/repo")
+import sys
 
 def parse_version(v):
     return [int(x) if x.isdigit() else x for x in re.split(r'[\.\-]', v)]
 
-def main():
-    json_url = 'https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json'
+def get_env_vars():
+    platform_name = os.environ.get('PLATFORM_NAME')
+    json_url = os.environ.get('JSON_URL')
+    targets_str = os.environ.get('TARGET_BOARDS')
+    my_repo = os.environ.get('GITHUB_REPOSITORY', 'user/repo')
+
+    if not platform_name or not json_url or not targets_str:
+        print("Missing required environment variables: PLATFORM_NAME, JSON_URL, TARGET_BOARDS")
+        sys.exit(1)
+
+    target_boards = {t.strip() for t in targets_str.split(',') if t.strip()}
+    return platform_name, json_url, target_boards, my_repo
+
+def fetch_json(json_url):
     print(f"Downloading {json_url}...")
     req = urllib.request.Request(json_url, headers={'User-Agent': 'Mozilla/5.0'})
     with urllib.request.urlopen(req) as response:
-        data = json.loads(response.read().decode('utf-8'))
+        return json.loads(response.read().decode('utf-8'))
+
+def main():
+    if len(sys.argv) < 2 or sys.argv[1] not in ['--get-version', '--build']:
+        print("Usage: python filter_core.py [--get-version | --build]")
+        sys.exit(1)
+
+    mode = sys.argv[1]
+    platform_name, json_url, target_boards, my_repo = get_env_vars()
+
+    data = fetch_json(json_url)
 
     platforms = data['packages'][0]['platforms']
     latest_platform = max(platforms, key=lambda p: parse_version(p['version']))
     version = latest_platform['version']
+
+    if mode == '--get-version':
+        if "GITHUB_OUTPUT" in os.environ:
+            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                f.write(f"version={version}\n")
+        else:
+            print(f"version={version}")
+        return
+
+    # --build mode
     print(f"Latest version: {version}")
 
-    download_url = latest_platform['url']
+    download_url = latest_platform.get('url')
+    if not download_url and 'systems' in latest_platform:
+        download_url = latest_platform['systems'][0]['url']
+
     archive_name = download_url.split('/')[-1]
 
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -86,7 +107,7 @@ def main():
                 filtered_lines.append(line)
             else:
                 board_id = stripped.split('.')[0]
-                if board_id in TARGET_BOARDS:
+                if board_id in target_boards:
                     filtered_lines.append(line)
                     if stripped.startswith(f"{board_id}.name="):
                         kept_board_names.add(stripped.split('=', 1)[1].strip())
@@ -95,7 +116,7 @@ def main():
             f.writelines(filtered_lines)
 
         print("Recompressing archive...")
-        new_archive_name = f'custom-rp2040-{version}.tar.gz'
+        new_archive_name = f'custom-{platform_name}-{version}.tar.gz'
         new_archive_path = os.path.join(os.getcwd(), new_archive_name)
 
         root_dir_name = os.path.basename(extracted_dir)
@@ -110,15 +131,18 @@ def main():
         print(f"Size: {size}, SHA-256: {sha256_hash}")
 
         print("Updating JSON...")
+        # Keep only the latest version in the JSON
+        data['packages'][0]['platforms'] = [latest_platform]
+
         latest_platform['archiveFileName'] = new_archive_name
         latest_platform['checksum'] = f'SHA-256:{sha256_hash}'
         latest_platform['size'] = str(size)
-        latest_platform['url'] = f'https://github.com/{MY_REPO}/releases/download/{version}/{new_archive_name}'
+        latest_platform['url'] = f'https://github.com/{my_repo}/releases/download/{platform_name}-{version}/{new_archive_name}'
 
         if 'boards' in latest_platform:
             latest_platform['boards'] = [b for b in latest_platform['boards'] if b.get('name') in kept_board_names]
 
-        out_json = 'package_custom_pico_index.json'
+        out_json = f'package_custom_{platform_name}_index.json'
         with open(out_json, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2)
 

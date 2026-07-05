@@ -1,4 +1,4 @@
-name: Sync Custom Pico Core
+name: Sync Custom Cores
 
 on:
   schedule:
@@ -9,57 +9,114 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  build-custom-cores:
     runs-on: ubuntu-latest
-    steps:
-      - name: Check latest version
-        id: check_version
-        run: |
-          UPSTREAM_TAG=$(curl -sL https://api.github.com/repos/earlephilhower/arduino-pico/releases/latest | jq -r .tag_name)
-          if [ -z "$UPSTREAM_TAG" ] || [ "$UPSTREAM_TAG" = "null" ]; then
-            echo "Failed to fetch upstream tag"
-            exit 1
-          fi
-          
-          MY_TAG=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name 2>/dev/null || echo "none")
-          
-          echo "Upstream tag: $UPSTREAM_TAG"
-          echo "My tag: $MY_TAG"
-          
-          if [ "$UPSTREAM_TAG" = "$MY_TAG" ]; then
-            echo "Versions match. Skipping."
-            echo "skip=true" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          echo "skip=false" >> $GITHUB_OUTPUT
-          echo "version=$UPSTREAM_TAG" >> $GITHUB_OUTPUT
+    strategy:
+      matrix:
+        include:
+          - platform: rp2040
+            json_url: https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+            targets: rpipico,rpipicow,rpipico2,rpipico2w,seeed_xiao_rp2040,seeed_xiao_rp2350,vccgnd_yd_rp2040,waveshare_rp2040_zero,waveshare_rp2350_zero,generic,generic_rp2350
+          - platform: esp32
+            json_url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
+            targets: esp32,esp32s3
 
+    steps:
       - name: Checkout repository
-        if: steps.check_version.outputs.skip == 'false'
         uses: actions/checkout@v4
 
       - name: Setup Python
-        if: steps.check_version.outputs.skip == 'false'
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
-      - name: Run script
-        if: steps.check_version.outputs.skip == 'false'
+      - name: Get latest version
+        id: get_version
         env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
+          PLATFORM_NAME: ${{ matrix.platform }}
+          JSON_URL: ${{ matrix.json_url }}
+          TARGET_BOARDS: ${{ matrix.targets }}
         run: |
-          python scripts/filter_core.py
+          python scripts/filter_core.py --get-version
 
-      - name: Create Release
-        if: steps.check_version.outputs.skip == 'false'
+      - name: Check if release exists
+        id: check_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=${{ steps.check_version.outputs.version }}
-          gh release create "$VERSION" \
-            --title "Custom Core $VERSION" \
-            --notes "Automated release of custom arduino-pico core version $VERSION" \
-            *.tar.gz \
-            package_custom_pico_index.json
+          VERSION=${{ steps.get_version.outputs.version }}
+          TAG_NAME="${{ matrix.platform }}-${VERSION}"
+          echo "Checking if tag $TAG_NAME exists..."
+          if gh release view "$TAG_NAME" > /dev/null 2>&1; then
+            echo "Release $TAG_NAME already exists. Skipping."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build custom core
+        if: steps.check_release.outputs.skip == 'false'
+        env:
+          PLATFORM_NAME: ${{ matrix.platform }}
+          JSON_URL: ${{ matrix.json_url }}
+          TARGET_BOARDS: ${{ matrix.targets }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python scripts/filter_core.py --build
+
+      - name: Create Release
+        if: steps.check_release.outputs.skip == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          TAG_NAME="${{ matrix.platform }}-${VERSION}"
+          gh release create "$TAG_NAME" \
+            --title "Custom Core $TAG_NAME" \
+            --notes "Automated release of custom $TAG_NAME core" \
+            *.tar.gz
+
+      - name: Publish JSON to gh-pages
+        if: steps.check_release.outputs.skip == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          mkdir -p gh-pages-workdir
+          cd gh-pages-workdir
+
+          git init
+          git remote add origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          git fetch origin gh-pages || true
+
+          if git ls-remote --heads origin gh-pages | grep -q gh-pages; then
+            git checkout gh-pages
+          else
+            git checkout -b gh-pages
+          fi
+
+          cp ../package_custom_${{ matrix.platform }}_index.json .
+          git add package_custom_${{ matrix.platform }}_index.json
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Update ${{ matrix.platform }} index"
+
+          # Push with retry to handle matrix concurrency
+          for i in {1..5}; do
+            if git push origin gh-pages; then
+              echo "Successfully pushed to gh-pages"
+              exit 0
+            fi
+            echo "Push failed, retrying after pulling..."
+            git pull --rebase origin gh-pages
+            sleep $((RANDOM % 10 + 5))
+          done
+
+          echo "Failed to push to gh-pages after 5 retries."
+          exit 1

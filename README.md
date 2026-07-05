@@ -1,9 +1,12 @@
-# Arduino Pico Minimal
+# Arduino Minimal Custom Cores
 
-公式の [earlephilhower/arduino-pico](https://github.com/earlephilhower/arduino-pico) コアから、特定のボードのみを抽出して最小化したカスタムボードマネージャーパッケージを自動生成・配信するリポジトリです。
+公式の [earlephilhower/arduino-pico](https://github.com/earlephilhower/arduino-pico) (RP2040) や [espressif/arduino-esp32](https://github.com/espressif/arduino-esp32) (ESP32) などのサードパーティコアから、特定のボードのみを抽出して最小化したカスタムボードマネージャーパッケージを自動生成・配信するリポジトリです。
+
 Arduino IDEのボード選択メニューに不要なボードが大量に表示されるのを防ぎ、スッキリと使うことができます。
 
-現在、以下のボードのみが有効化されています：
+現在、以下のプラットフォームとボードのみが有効化されています：
+
+**RP2040**
 - Raspberry Pi Pico
 - Raspberry Pi Pico W
 - Raspberry Pi Pico 2
@@ -16,33 +19,48 @@ Arduino IDEのボード選択メニューに不要なボードが大量に表示
 - Generic RP2040
 - Generic RP2350
 
+**ESP32**
+- ESP32 Dev Module
+- ESP32S3 Dev Module
+
 ## Arduino IDE での使い方
 
 1. Arduino IDE を起動します。
 2. **ファイル** > **基本設定** (macOSの場合は **Arduino IDE** > **Settings...**) を開きます。
 3. **追加のボードマネージャのURL** に以下のURLを追加します。
+   *(※両方追加することも、必要な方だけ追加することも可能です)*
+
+   **RP2040 (Raspberry Pi Pico系) の場合:**
    ```text
-   https://github.com/Suzu-Gears/arduino-pico-minimal/releases/latest/download/package_custom_pico_index.json
+   https://Suzu-Gears.github.io/arduino-pico-minimal/package_custom_rp2040_index.json
    ```
-   *(※すでに他のURLが設定されている場合は、カンマ区切りまたは改行して追加してください)*
+   **ESP32 の場合:**
+   ```text
+   https://Suzu-Gears.github.io/arduino-pico-minimal/package_custom_esp32_index.json
+   ```
 4. **ツール** > **ボード** > **ボードマネージャ...** を開きます。
-5. 検索欄に `pico` または `rp2040` と入力し、このリポジトリから配信されているカスタム版パッケージをインストールしてください。
+5. 検索欄に `pico` または `esp32` と入力し、このリポジトリから配信されているカスタム版パッケージをインストールしてください。
+
+### ⚠️ Arduino IDEのキャッシュの罠
+IDEのボードマネージャーは、JSONのURLを読み込むと手元のPCに強くキャッシュします。
+テスト中に「新しいJSONが生成されたはずなのに、IDEのリストが変わらない」という現象が起きたら、IDEのキャッシュが原因の可能性が高いです。
+その場合は、キーボードの `Ctrl + Shift + P` (Macは `Cmd + Shift + P`) でコマンドパレットを開き、「**Arduino: Clear Cache**」などを実行するか、PC内のキャッシュフォルダ（Windowsなら `%LOCALAPPDATA%\Arduino15`、Macなら `~/Library/Arduino15`）にある `package_..._index.json` を直接削除してみてください。
 
 ## 仕組みについて
 
-GitHub Actions のワークフローが毎日自動的に実行され、アップストリームの `arduino-pico` リポジトリの最新リリースを確認します。
-新しいリリースが見つかると、自動的にコアをダウンロードして `boards.txt` をフィルタリングし、不要なボード定義を削除した状態の `tar.gz` アーカイブと JSON インデックスファイルを再生成して、このリポジトリの [Releases](https://github.com/Suzu-Gears/arduino-pico-minimal/releases) に自動公開します。
+GitHub Actions のワークフローが毎日自動的に実行され、アップストリームのリポジトリの最新リリースを確認します。
+新しいリリースが見つかると、自動的にコアをダウンロードして `boards.txt` をフィルタリングし、不要なボード定義を削除した状態の `tar.gz` アーカイブと JSON インデックスファイルを再生成します。アーカイブは Release アセットとして自動公開され、JSONファイルは `gh-pages` ブランチにプッシュされます。
 
 ## フォークしてカスタマイズする
 
 このリポジトリをフォークし、ご自身で使用するボードだけを有効化することも簡単です。
 対応しているすべてのボード名と内部ID（Board ID）のリストは **[AVAILABLE_BOARDS.md](./AVAILABLE_BOARDS.md)** にまとめています。
 
-有効化したいボードの内部IDを `scripts/filter_core.py` 内の `TARGET_BOARDS` に追記・変更するだけで、独自の最小限パッケージを構築できます。
+有効化したいボードの内部IDを `.github/workflows/sync.yml` の `targets` に追記・変更するだけで、独自の最小限パッケージを構築できます。
 
 ### フォーク後の GitHub Actions 有効化と初期設定手順
 
-リポジトリをフォークした直後は、セキュリティ保護のため自動実行が無効化されています。以下の手順で Actions を有効化し、Release作成の権限を付与してください。
+リポジトリをフォークした直後は、セキュリティ保護のため自動実行が無効化されています。以下の手順で Actions を有効化し、設定を行ってください。
 
 **1. Actionsの有効化と権限設定**
 GitHubのブラウザ画面で、対象のリポジトリを開きます。
@@ -52,7 +70,7 @@ GitHubのブラウザ画面で、対象のリポジトリを開きます。
    （すぐ下にある [Save] ボタンをクリックします）
 
 **2. ワークフローへの書き込み権限（Read and write）の付与**
-リポジトリ自体の設定でもReleaseアップロードのための書き込みが許可されている必要があります。
+リポジトリ自体の設定でもReleaseアップロード等のための書き込みが許可されている必要があります。
 1. 先ほどと同じ **[Actions]** > **[General]** の画面をさらに下へスクロールします。
 2. 「Workflow permissions」 という項目を見つけます。
 3. デフォルトでは「Read repository contents and packages permissions」になっていることが多いので、これを上の **[Read and write permissions]** に変更します。
@@ -60,10 +78,14 @@ GitHubのブラウザ画面で、対象のリポジトリを開きます。
 
 **3. ワークフローの手動トリガー（動作確認）**
 設定が完了し、作成したファイルをPush（またはフォーク）すると、上部タブの [Actions] にワークフローが表示されるようになります。
-
-今回のワークフローには手動トリガーが設定されていますので、初回のテストは以下の手順で行えます。
 1. リポジトリ上部の **[Actions]** タブを開きます。
    （※初回アクセス時は「I understand my workflows, go ahead and enable them」という緑のボタンが出ることがあります。その場合はクリックしてください）
-2. 左側のメニューからワークフロー名（**Sync Custom Pico Core**）をクリックします。
+2. 左側のメニューからワークフロー名（**Sync Custom Cores**）をクリックします。
 3. 画面右側の青い帯にある **[Run workflow]** ボタンをクリックし、緑色の [Run workflow] を押すと、即座にビルドとリリース作成のテストが開始されます。
-   しばらく待って処理が完了すると、自動的に最初のReleaseが作成され、JSONファイルが配信可能になります。
+
+**4. GitHub Pages の有効化（重要: 初回のみ手動設定が必要）**
+Actionsが `gh-pages` ブランチを作成してJSONをプッシュしても、それだけでは自動的にURLは公開されません。初回のActions実行が終わった後に、一度だけ手動で設定をオンにする必要があります。
+1. リポジトリの **[Settings]** > 左側メニューの **[Pages]** を開きます。
+2. 「Build and deployment」 の Source を **[Deploy from a branch]** にします。
+3. その下の Branch のプルダウンで **`gh-pages`** を選び、`/ (root)` のまま **[Save]** を押します。
+4. 数分待つとURLが有効になり、Arduino IDEからアクセスできるようになります。
