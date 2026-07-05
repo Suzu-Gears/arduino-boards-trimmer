@@ -22,10 +22,10 @@ jobs:
             targets: rpipico,rpipicow,rpipico2,rpipico2w,seeed_xiao_rp2040,seeed_xiao_rp2350,vccgnd_yd_rp2040,waveshare_rp2040_zero,waveshare_rp2350_zero,generic,generic_rp2350
           - platform: esp32
             json_url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
-            targets: esp32,esp32s3
+            targets: esp32,esp32s3,XIAO_ESP32S3
           - platform: bluepad32
             json_url: https://raw.githubusercontent.com/ricardoquesada/esp32-arduino-lib-builder/master/bluepad32_files/package_esp32_bluepad32_index.json
-            targets:
+            targets: ''
 
     steps:
       - name: Checkout repository
