@@ -11,16 +11,16 @@ import sys
 def parse_version(v):
     return [int(x) if x.isdigit() else x for x in re.split(r'[\.\-]', v)]
 
-def get_env_vars():
+def get_env_vars(mode):
     platform_name = os.environ.get('PLATFORM_NAME')
     json_url = os.environ.get('JSON_URL')
-    targets_str = os.environ.get('TARGET_BOARDS')
+    targets_str = os.environ.get('TARGET_BOARDS', '')
     my_repo = os.environ.get('GITHUB_REPOSITORY', 'user/repo')
-
-    if not platform_name or not json_url or not targets_str:
-        print("Missing required environment variables: PLATFORM_NAME, JSON_URL, TARGET_BOARDS")
+    
+    if not platform_name or not json_url:
+        print("Missing required environment variables: PLATFORM_NAME, JSON_URL")
         sys.exit(1)
-
+        
     target_boards = {t.strip() for t in targets_str.split(',') if t.strip()}
     return platform_name, json_url, target_boards, my_repo
 
@@ -34,9 +34,9 @@ def main():
     if len(sys.argv) < 2 or sys.argv[1] not in ['--get-version', '--build']:
         print("Usage: python filter_core.py [--get-version | --build]")
         sys.exit(1)
-
+        
     mode = sys.argv[1]
-    platform_name, json_url, target_boards, my_repo = get_env_vars()
+    platform_name, json_url, target_boards, my_repo = get_env_vars(mode)
 
     data = fetch_json(json_url)
 
@@ -107,7 +107,7 @@ def main():
                 filtered_lines.append(line)
             else:
                 board_id = stripped.split('.')[0]
-                if board_id in target_boards:
+                if not target_boards or board_id in target_boards:
                     filtered_lines.append(line)
                     if stripped.startswith(f"{board_id}.name="):
                         kept_board_names.add(stripped.split('=', 1)[1].strip())
@@ -140,7 +140,9 @@ def main():
         latest_platform['url'] = f'https://github.com/{my_repo}/releases/download/{platform_name}-{version}/{new_archive_name}'
 
         if 'boards' in latest_platform:
-            latest_platform['boards'] = [b for b in latest_platform['boards'] if b.get('name') in kept_board_names]
+            if target_boards:
+                latest_platform['boards'] = [b for b in latest_platform['boards'] if b.get('name') in kept_board_names]
+            # If target_boards is empty, we keep the original boards array intact
 
         out_json = f'package_custom_{platform_name}_index.json'
         with open(out_json, 'w', encoding='utf-8') as f:
