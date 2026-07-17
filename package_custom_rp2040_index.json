@@ -12,10 +12,10 @@
         {
           "category": "Raspberry Pi Pico",
           "name": "Raspberry Pi Pico/RP2040/RP2350",
-          "url": "https://github.com/Suzu-Gears/arduino-pico-minimal/releases/download/rp2040-5.6.1/custom-rp2040-5.6.1.tar.gz",
-          "version": "5.6.1",
+          "url": "https://github.com/Suzu-Gears/arduino-boards-trimmer/releases/download/rp2040-5.7.0/custom-rp2040-5.7.0.tar.gz",
+          "version": "5.7.0",
           "architecture": "rp2040",
-          "archiveFileName": "custom-rp2040-5.6.1.tar.gz",
+          "archiveFileName": "custom-rp2040-5.7.0.tar.gz",
           "boards": [
             {
               "name": "Raspberry Pi Pico"
@@ -91,8 +91,8 @@
           "help": {
             "online": ""
           },
-          "size": "98678637",
-          "checksum": "SHA-256:ad690c48363ee30325007d6751c570af19fa4d3810843112a634a6dad3f4d8c8"
+          "size": "111703274",
+          "checksum": "SHA-256:9d593e9cb11a41e1c1c8079b26ae9768eb499327668de21521113f2f483635f1"
         }
       ],
       "tools": [
