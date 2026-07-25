@@ -34,5 +34,15 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "docs: Update AVAILABLE_BOARDS.md based on sync.yml changes"
-            git push
+            for i in {1..5}; do
+              if git push; then
+                echo "Successfully pushed"
+                exit 0
+              fi
+              echo "Push failed, retrying after pulling..."
+              git pull --rebase
+              sleep $((RANDOM % 5 + 2))
+            done
+            echo "Failed to push after 5 retries."
+            exit 1
           fi
