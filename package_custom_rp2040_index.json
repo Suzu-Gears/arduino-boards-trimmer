@@ -30,9 +30,6 @@
               "name": "Raspberry Pi Pico 2W"
             },
             {
-              "name": "Pimoroni PGA2350"
-            },
-            {
               "name": "Seeed XIAO RP2040"
             },
             {
@@ -94,8 +91,8 @@
           "help": {
             "online": ""
           },
-          "size": "113769316",
-          "checksum": "SHA-256:cf0728ba1a9568e5b47217a80254ba1fd454cd7e45b522feda097dc0eca2c68b"
+          "size": "113768018",
+          "checksum": "SHA-256:2137a57e1dba94ae0b4cab7b9b2af79e9568d93f15476169432dc3f6f4b173af"
         }
       ],
       "tools": [
