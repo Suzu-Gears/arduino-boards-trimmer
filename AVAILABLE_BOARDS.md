@@ -4,7 +4,7 @@
 
 ## RP2040
 
-Based on release version `5.6.1`
+Based on release version `6.0.0`
 
 | Board Name | Board ID |
 | --- | --- |
@@ -74,6 +74,7 @@ Based on release version `5.6.1`
 | iLabs Challenger 2350 WiFi/BLE | `challenger_2350_wifi6_ble5` |
 | iLabs Challenger NB 2040 WiFi | `challenger_nb_2040_wifi` |
 | iLabs Connectivity 2040 LTE/WiFi/BLE | `connectivity_2040_lte_wifi_ble` |
+| iLabs CPico 2350 | `ilabs_cpico_2350` |
 | iLabs RPICO32 | `ilabs_rpico32` |
 | L'atelier d'Arnoz DudesCab | `DudesCab` |
 | Makerbase MKS THR36 | `mksthr36` |
@@ -90,8 +91,8 @@ Based on release version `5.6.1`
 | Olimex Pico2XL | `olimex_pico2xl` |
 | Olimex Pico2XXL | `olimex_pico2xxl` |
 | Olimex RP2040-Pico30 | `olimex_rp2040pico30` |
-| PCBCupid Glyph 2040 | `pcbcupid_glyph_2040` |
-| PCBCupid Glyph Mini 2040 | `pcbcupid_glyph_mini_2040` |
+| Pcbcupid GLYPH 2040 | `pcbcupid_glyph_2040` |
+| Pcbcupid GLYPH MINI 2040 | `pcbcupid_glyph_mini_2040` |
 | PicoLume Transceiver | `picolume` |
 | Pimoroni Explorer | `pimoroni_explorer` |
 | Pimoroni PGA2040 | `pimoroni_pga2040` |
@@ -148,6 +149,7 @@ Based on release version `5.6.1`
 | Waveshare RP2350 Plus | `waveshare_rp2350_plus` |
 | Waveshare RP2350 Zero | `waveshare_rp2350_zero` |
 | Waveshare RP2350B Plus W | `waveshare_rp2350b_plus_w` |
+| WeAct Studio RP2350B Core Board | `weact_rp2350b` |
 | WIZnet W5100S-EVB-Pico | `wiznet_5100s_evb_pico` |
 | WIZnet W5100S-EVB-Pico2 | `wiznet_5100s_evb_pico2` |
 | WIZnet W5500-EVB-Pico | `wiznet_5500_evb_pico` |
@@ -159,7 +161,7 @@ Based on release version `5.6.1`
 
 ## ESP32
 
-Based on release version `3.3.10`
+Based on release version `3.3.11`
 
 | Board Name | Board ID |
 | --- | --- |
@@ -217,6 +219,8 @@ Based on release version `3.3.10`
 | BharatPi Node Wifi Module | `BharatPi-Node-Wifi` |
 | BPI-BIT | `bpi-bit` |
 | BPI-Leaf-S3 | `bpi_leaf_s3` |
+| CANipulator V1 (ESP32-C6) | `canipulator_v1` |
+| CANipulator V2 (ESP32-C5) | `canipulator_v2` |
 | cezerio dev ESP32C6 | `cezerio_dev_esp32c6` |
 | cezerio mini dev ESP32C6 | `cezerio_mini_dev_esp32c6` |
 | CircuitART Zero S3 | `circuitart_zero_s3` |
@@ -238,6 +242,7 @@ Based on release version `3.3.10`
 | Department of Alchemy MiniMain ESP32-S2 | `department_of_alchemy_minimain_esp32s2` |
 | DFRobot Beetle ESP32-C3 | `dfrobot_beetle_esp32c3` |
 | DFRobot Beetle ESP32-C6 | `dfrobot_beetle_esp32c6` |
+| DFRobot Edge101 IOT Controller | `dfrobot_edge101` |
 | DFRobot Firebeetle 2 ESP32-C5 | `dfrobot_firebeetle2_esp32c5` |
 | DFRobot FireBeetle 2 ESP32-C6 | `dfrobot_firebeetle2_esp32c6` |
 | DFRobot FireBeetle 2 ESP32-P4 | `dfrobot_firebeetle2_esp32p4` |
@@ -252,6 +257,7 @@ Based on release version `3.3.10`
 | Edgebox-ESP-100 | `Edgebox-ESP-100` |
 | Elecrow CrowPanel 7.0P | `elecrow_crowpanel_7` |
 | Electronic SweetPeas - ESP320 | `esp320` |
+| ES Developer ES32Lab | `es32lab` |
 | ESP-C3-M1-I-Kit | `esp32c3m1IKit` |
 | ESP32 Dev Module | `esp32` |
 | ESP32 Family Device | `esp32_family` |
@@ -289,6 +295,14 @@ Based on release version `3.3.10`
 | Franzininho WiFi MSC | `franzininho_wifi_msc_esp32s2` |
 | Fri3d Badge 2024 (ESP32-S3-WROOM-1) | `fri3d_2024_esp32s3` |
 | Frog Board ESP32 | `frogboard` |
+| ftSwarmControlUSBC | `ftSwarmControlUSBC` |
+| ftSwarmControlUSBMicro | `ftSwarmControlUSBMicro` |
+| ftSwarmDuino | `ftSwarmDuino` |
+| ftSwarmJST | `ftSwarmJST` |
+| ftSwarmPwrDrive | `ftSwarmPwrDrive` |
+| ftSwarmRC | `ftSwarmRC` |
+| ftSwarmRS | `ftSwarmRS` |
+| ftSwarmXL | `ftSwarmXL` |
 | Geekble Mini ESP32-C3 | `Geekble_ESP32C3` |
 | Geekble nano ESP32-S3 | `Geekble_Nano_ESP32S3` |
 | Heltec Capsule Sensor (V3) | `heltec_capsule_sensor_V3` |
@@ -415,9 +429,13 @@ Based on release version `3.3.10`
 | Pandabyte xC5 - ESP32C5 | `pandabyte_xc5` |
 | PandaByte xC6 - ESP32C6 | `pandabyte_xc6` |
 | PandaByte xS3 - ESP32S3 | `pandabyte_xs3` |
+| Pcbcupid Cypher | `pcbcupid_cypher` |
 | Pcbcupid GLYPH C3 | `Pcbcupid_GLYPH_C3` |
+| Pcbcupid GLYPH C5 | `pcbcupid_glyph_c5` |
 | Pcbcupid GLYPH C6 | `Pcbcupid_GLYPH_C6` |
 | Pcbcupid GLYPH H2 | `Pcbcupid_GLYPH_H2` |
+| Pcbcupid GLYPH S3 | `Pcbcupid_GLYPH_S3` |
+| Pcbcupid GLYPH S3 PSRAM | `Pcbcupid_GLYPH_S3_PSRAM` |
 | Piranha ESP-32 | `piranha_esp-32` |
 | ProtoCentral HealthyPi 4 | `healthypi4` |
 | Pycom GPy | `gpy` |
@@ -426,7 +444,7 @@ Based on release version `3.3.10`
 | RoboHeart Hercules | `roboheart_hercules` |
 | Root Maker | `rootmaker` |
 | S.ODI Ultra v1 | `S_ODI_Ultra` |
-| senseBox Eye | `sensebox_eye` |
+| senseBox MCU Eye | `sensebox_eye` |
 | senseBox MCU-S2 ESP32-S2 | `sensebox_mcu_esp32s2` |
 | Senses's WEIZEN | `sensesiot_weizen` |
 | Silicognition ManT1S | `mant1s` |
