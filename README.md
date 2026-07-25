@@ -18,7 +18,6 @@ Arduino IDEのボード選択メニューに不要なボードが大量に表示
 - Waveshare RP2350 Zero
 - Generic RP2040
 - Generic RP2350
-- Olimex Pico2BB48
 
 **ESP32**
 - ESP32 Dev Module
