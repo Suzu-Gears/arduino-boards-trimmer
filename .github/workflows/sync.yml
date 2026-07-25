@@ -53,10 +53,15 @@ jobs:
           VERSION=${{ steps.get_version.outputs.version }}
           TAG_NAME="${{ matrix.platform }}-${VERSION}"
           echo "Checking if tag $TAG_NAME exists..."
-          if gh release view "$TAG_NAME" > /dev/null 2>&1; then
-            echo "Release $TAG_NAME already exists. Skipping."
-            echo "skip=true" >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            if gh release view "$TAG_NAME" > /dev/null 2>&1; then
+              echo "Release $TAG_NAME already exists. Skipping."
+              echo "skip=true" >> $GITHUB_OUTPUT
+            else
+              echo "skip=false" >> $GITHUB_OUTPUT
+            fi
           else
+            echo "Event is ${{ github.event_name }}. Forcing build and overwrite."
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
@@ -77,6 +82,7 @@ jobs:
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
           TAG_NAME="${{ matrix.platform }}-${VERSION}"
+          gh release delete "$TAG_NAME" --cleanup-tag -y || true
           gh release create "$TAG_NAME" \
             --title "Custom Core $TAG_NAME" \
             --notes "Automated release of custom $TAG_NAME core" \
