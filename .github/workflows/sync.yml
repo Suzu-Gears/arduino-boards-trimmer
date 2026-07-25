@@ -19,7 +19,7 @@ jobs:
         include:
           - platform: rp2040
             json_url: https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
-            targets: rpipico,rpipicow,rpipico2,rpipico2w,seeed_xiao_rp2040,seeed_xiao_rp2350,vccgnd_yd_rp2040,waveshare_rp2040_zero,waveshare_rp2350_zero,generic,generic_rp2350
+            targets: rpipico,rpipicow,rpipico2,rpipico2w,seeed_xiao_rp2040,seeed_xiao_rp2350,vccgnd_yd_rp2040,waveshare_rp2040_zero,waveshare_rp2350_zero,generic,generic_rp2350,olimex_pico2bb48
           - platform: esp32
             json_url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
             targets: esp32,esp32s3,XIAO_ESP32S3

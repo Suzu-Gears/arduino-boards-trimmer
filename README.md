@@ -18,6 +18,7 @@ Arduino IDEのボード選択メニューに不要なボードが大量に表示
 - Waveshare RP2350 Zero
 - Generic RP2040
 - Generic RP2350
+- Olimex Pico2BB48
 
 **ESP32**
 - ESP32 Dev Module
@@ -32,7 +33,7 @@ Arduino IDEのボード選択メニューに不要なボードが大量に表示
 1. Arduino IDE を起動します。
 2. **ファイル** > **基本設定** (macOSの場合は **Arduino IDE** > **Settings...**) を開きます。
 3. **追加のボードマネージャのURL** に以下のURLを追加します。
-   *(※両方追加することも、必要な方だけ追加することも可能です)*
+   *(※全部追加することも、必要なものだけ追加することも可能です)*
 
    **RP2040 (Raspberry Pi Pico系) の場合:**
    ```text
