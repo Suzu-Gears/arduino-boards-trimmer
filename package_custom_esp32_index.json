@@ -16,8 +16,8 @@
           "category": "ESP32",
           "url": "https://github.com/Suzu-Gears/arduino-boards-trimmer/releases/download/esp32-3.3.11/custom-esp32-3.3.11.tar.gz",
           "archiveFileName": "custom-esp32-3.3.11.tar.gz",
-          "checksum": "SHA-256:5b3aef65e993545819076b610681b115ef3b96f93f23aa2c3d7e518b2ac66c65",
-          "size": "45110244",
+          "checksum": "SHA-256:6090ca42c39f53f93fd493dd779ceb126402ce4b38538b0fcb4c9b076c33d1b9",
+          "size": "45111216",
           "help": {
             "online": ""
           },
