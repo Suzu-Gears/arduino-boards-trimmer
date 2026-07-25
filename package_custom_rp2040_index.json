@@ -30,6 +30,9 @@
               "name": "Raspberry Pi Pico 2W"
             },
             {
+              "name": "Olimex Pico2BB48"
+            },
+            {
               "name": "Seeed XIAO RP2040"
             },
             {
@@ -91,8 +94,8 @@
           "help": {
             "online": ""
           },
-          "size": "113767039",
-          "checksum": "SHA-256:788aa83da1a8e3685ab074f541d3e25d3fdc85c677ce7a01a64d5da147c19283"
+          "size": "113766072",
+          "checksum": "SHA-256:1aed145daebf550082edeaa851949a6fd1e8655a795070c5c97b536fdf123966"
         }
       ],
       "tools": [
