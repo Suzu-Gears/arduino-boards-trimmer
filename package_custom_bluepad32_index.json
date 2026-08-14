@@ -1,7 +1,7 @@
 {
   "packages": [
     {
-      "name": "esp32-bluepad32",
+      "name": "esp32-bluepad32-trimmed",
       "maintainer": "Ricardo Quesada",
       "websiteURL": "https://gitlab.com/ricardoquesada/bluepad32",
       "email": "unijoysticle@gmail.com",
@@ -10,14 +10,14 @@
       },
       "platforms": [
         {
-          "name": "esp32_bluepad32",
+          "name": "esp32_bluepad32 (Mirror)",
           "architecture": "esp32",
           "version": "4.1.0",
           "category": "Contributed",
-          "url": "https://github.com/Suzu-Gears/arduino-boards-trimmer/releases/download/bluepad32-4.1.0/custom-bluepad32-4.1.0.tar.gz",
-          "archiveFileName": "custom-bluepad32-4.1.0.tar.gz",
-          "checksum": "SHA-256:29fed3b4b70bd8c60bb805a68a8822486e5f50e0bc02683cdb42a543e7209ae1",
-          "size": "190764422",
+          "url": "https://github.com/ricardoquesada/esp32-arduino-lib-builder/releases/download/4.1.0/esp32-bluepad32-4.1.0.zip",
+          "archiveFileName": "esp32-bluepad32-4.1.0.zip",
+          "checksum": "SHA-256:2b4916baba6c8d4e40b0330e12dd6a21ca7b95540337e6c2d2713831ccf3c394",
+          "size": "197942794",
           "help": {
             "online": "https://discord.gg/r5aMn6Cw5q"
           },
