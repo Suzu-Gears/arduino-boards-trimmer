@@ -1,7 +1,7 @@
 {
   "packages": [
     {
-      "name": "rp2040",
+      "name": "rp2040-trimmed",
       "maintainer": "Earle F. Philhower, III",
       "websiteURL": "https://github.com/earlephilhower/arduino-pico",
       "email": "earlephilhower@yahoo.com",
@@ -11,7 +11,7 @@
       "platforms": [
         {
           "category": "Raspberry Pi Pico",
-          "name": "Raspberry Pi Pico/RP2040/RP2350",
+          "name": "Raspberry Pi Pico/RP2040/RP2350 (Trimmed)",
           "url": "https://github.com/Suzu-Gears/arduino-boards-trimmer/releases/download/rp2040-6.0.0/custom-rp2040-6.0.0.tar.gz",
           "version": "6.0.0",
           "architecture": "rp2040",
@@ -53,37 +53,37 @@
           ],
           "toolsDependencies": [
             {
-              "packager": "rp2040",
+              "packager": "rp2040-trimmed",
               "version": "5.0.0-9576866",
               "name": "pqt-gcc"
             },
             {
-              "packager": "rp2040",
+              "packager": "rp2040-trimmed",
               "version": "5.0.0-9576866",
               "name": "pqt-gcc-riscv"
             },
             {
-              "packager": "rp2040",
+              "packager": "rp2040-trimmed",
               "version": "5.0.0-9576866",
               "name": "pqt-mklittlefs"
             },
             {
-              "packager": "rp2040",
+              "packager": "rp2040-trimmed",
               "version": "5.0.0-9576866",
               "name": "pqt-pioasm"
             },
             {
-              "packager": "rp2040",
+              "packager": "rp2040-trimmed",
               "version": "1.0.1-base-3a57aed-1",
               "name": "pqt-python3"
             },
             {
-              "packager": "rp2040",
+              "packager": "rp2040-trimmed",
               "version": "5.0.0-9576866",
               "name": "pqt-openocd"
             },
             {
-              "packager": "rp2040",
+              "packager": "rp2040-trimmed",
               "version": "5.0.0-9576866",
               "name": "pqt-picotool"
             }
@@ -91,8 +91,8 @@
           "help": {
             "online": ""
           },
-          "size": "113768018",
-          "checksum": "SHA-256:2137a57e1dba94ae0b4cab7b9b2af79e9568d93f15476169432dc3f6f4b173af"
+          "size": "113012506",
+          "checksum": "SHA-256:638a81ef52945451ac3d99e3344f52cf406c2b73d04a056f2b4617ea1c415c8b"
         }
       ],
       "tools": [
