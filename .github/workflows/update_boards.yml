@@ -3,11 +3,19 @@ name: Update Available Boards
 on:
   push:
     paths:
-      - '.github/workflows/sync.yml'
+      - 'platforms.yml'
+      - 'scripts/update_board_list.py'
+  schedule:
+    # 週1回、アップストリームの新ボード追加を一覧に反映する
+    - cron: '0 1 * * 1'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: update-available-boards
+  cancel-in-progress: false
 
 jobs:
   update-docs:
@@ -19,11 +27,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.x'
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml packaging
 
       - name: Run update script
-        run: |
-          python scripts/update_board_list.py
+        run: python scripts/update_board_list.py
 
       - name: Commit and Push
         run: |
@@ -33,7 +43,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "docs: Update AVAILABLE_BOARDS.md based on sync.yml changes"
+            git commit -m "docs: Update AVAILABLE_BOARDS.md"
             for i in {1..5}; do
               if git push; then
                 echo "Successfully pushed"

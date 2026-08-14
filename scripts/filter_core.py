@@ -1,154 +1,318 @@
+"""Build trimmed Arduino board manager packages.
+
+Modes:
+  --matrix       platforms.yml から GitHub Actions 用のマトリクス JSON を出力
+  --get-version  最新バージョンを取得し upstream index をキャッシュ
+  --build        コアをダウンロード・フィルタ・再パッケージし index JSON を生成
+
+環境変数 (--get-version / --build):
+  PLATFORM_NAME, JSON_URL, TARGET_BOARDS, GITHUB_REPOSITORY, PACKAGER_SUFFIX
+"""
+
+import copy
+import gzip
 import json
-import urllib.request
-import tarfile
-import hashlib
 import os
-import tempfile
-import re
-import shutil
 import sys
+import tarfile
+import tempfile
+import zipfile
 
-def parse_version(v):
-    return [int(x) if x.isdigit() else x for x in re.split(r'[\.\-]', v)]
+from core_utils import (
+    download_file,
+    fetch_json,
+    latest_platform_entry,
+    load_config,
+    parse_targets,
+    sha256_of,
+    verify_checksum,
+)
 
-def get_env_vars(mode):
-    platform_name = os.environ.get('PLATFORM_NAME')
-    json_url = os.environ.get('JSON_URL')
-    targets_str = os.environ.get('TARGET_BOARDS', '')
-    my_repo = os.environ.get('GITHUB_REPOSITORY', 'user/repo')
-    
+
+# ---------------------------------------------------------------------------
+# boards.txt filtering (pure function -> unit testable)
+# ---------------------------------------------------------------------------
+
+def filter_boards_txt(lines, target_boards):
+    """Filter boards.txt lines, keeping only target boards.
+
+    Returns (filtered_lines, kept_board_names, seen_board_ids).
+    - コメント・空行・menu.* 行・ボードIDを持たない大域プロパティ行は常に保持
+    - target_boards が空なら全行保持(ミラーモード)
+    """
+    filtered = []
+    kept_names = set()
+    seen_ids = set()
+
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or stripped.startswith("menu."):
+            filtered.append(line)
+            continue
+
+        key = stripped.split("=", 1)[0]
+        if "." not in key:
+            # 例: "version=1.0" のようなボードIDを持たない大域プロパティ
+            filtered.append(line)
+            continue
+
+        board_id = key.split(".", 1)[0]
+        seen_ids.add(board_id)
+
+        if not target_boards or board_id in target_boards:
+            filtered.append(line)
+            if key == f"{board_id}.name":
+                kept_names.add(stripped.split("=", 1)[1].strip())
+
+    return filtered, kept_names, seen_ids
+
+
+def validate_targets(target_boards, seen_ids, platform_name):
+    """指定した Board ID が1つも存在しない場合は即座に失敗させる。"""
+    missing = target_boards - seen_ids
+    if missing:
+        raise SystemExit(
+            f"ERROR [{platform_name}]: these target board IDs were not found in "
+            f"boards.txt: {', '.join(sorted(missing))}\n"
+            f"Check AVAILABLE_BOARDS.md for valid IDs. Aborting to avoid "
+            f"publishing a broken package."
+        )
+
+
+# ---------------------------------------------------------------------------
+# Archive handling
+# ---------------------------------------------------------------------------
+
+def extract_archive(archive_path, dest_dir):
+    """zip / tar.gz を展開。zip では実行権限ビットを復元する。"""
+    if archive_path.endswith(".zip"):
+        with zipfile.ZipFile(archive_path, "r") as zf:
+            for info in zf.infolist():
+                extracted = zf.extract(info, dest_dir)
+                perm = (info.external_attr >> 16) & 0o7777
+                if perm:
+                    os.chmod(extracted, perm)
+    else:
+        with tarfile.open(archive_path, "r:*") as tar:
+            tar.extractall(path=dest_dir, filter="tar")
+
+
+def find_extracted_dir(tmpdir, archive_name):
+    for name in os.listdir(tmpdir):
+        full = os.path.join(tmpdir, name)
+        if name != archive_name and os.path.isdir(full):
+            return full
+    raise SystemExit("ERROR: could not find extracted directory")
+
+
+def create_reproducible_targz(src_dir, out_path, root_name):
+    """決定論的 tar.gz を生成する。
+
+    同じ入力からは常に同じバイト列(=同じチェックサム)が得られるよう、
+    mtime / uid / gid / ファイル順序 / gzip ヘッダを固定する。
+    """
+    entries = [(root_name, src_dir)]
+    for dirpath, dirnames, filenames in os.walk(src_dir):
+        dirnames.sort()
+        rel = os.path.relpath(dirpath, src_dir)
+        for name in sorted(dirnames + filenames):
+            full = os.path.join(dirpath, name)
+            arc = os.path.join(root_name, name) if rel == "." else os.path.join(root_name, rel, name)
+            entries.append((arc, full))
+
+    def normalize(ti):
+        ti.uid = ti.gid = 0
+        ti.uname = ti.gname = ""
+        ti.mtime = 0
+        return ti
+
+    with open(out_path, "wb") as raw:
+        with gzip.GzipFile(filename="", fileobj=raw, mode="wb", mtime=0) as gz:
+            with tarfile.open(fileobj=gz, mode="w") as tar:
+                for arcname, fullpath in sorted(entries, key=lambda e: e[0]):
+                    tar.add(fullpath, arcname=arcname, recursive=False, filter=normalize)
+
+
+# ---------------------------------------------------------------------------
+# Index JSON manipulation
+# ---------------------------------------------------------------------------
+
+def rename_packager(data, suffix):
+    """公式 index との名前衝突を避けるため packager 名を変更する。
+
+    packages[0].name を '<name>-<suffix>' に変更し、同一パッケージ内の
+    ツールを参照している toolsDependencies / discoveryDependencies /
+    monitorDependencies の packager フィールドも追従させる。
+    (packager が 'arduino' 等の外部参照の場合は変更しない)
+    """
+    pkg = data["packages"][0]
+    original = pkg["name"]
+    new_name = f"{original}-{suffix}"
+    pkg["name"] = new_name
+
+    for platform in pkg.get("platforms", []):
+        for dep_key in ("toolsDependencies", "discoveryDependencies", "monitorDependencies"):
+            for dep in platform.get(dep_key, []) or []:
+                if dep.get("packager") == original:
+                    dep["packager"] = new_name
+    return original, new_name
+
+
+def mark_trimmed(platform_entry, mirror=False):
+    label = " (Mirror)" if mirror else " (Trimmed)"
+    if not platform_entry.get("name", "").endswith(label):
+        platform_entry["name"] = platform_entry.get("name", "") + label
+
+
+# ---------------------------------------------------------------------------
+# Modes
+# ---------------------------------------------------------------------------
+
+def get_env():
+    platform_name = os.environ.get("PLATFORM_NAME")
+    json_url = os.environ.get("JSON_URL")
     if not platform_name or not json_url:
-        print("Missing required environment variables: PLATFORM_NAME, JSON_URL")
-        sys.exit(1)
-        
-    target_boards = {t.strip() for t in targets_str.split(',') if t.strip()}
-    return platform_name, json_url, target_boards, my_repo
+        raise SystemExit("Missing required environment variables: PLATFORM_NAME, JSON_URL")
+    targets = parse_targets(os.environ.get("TARGET_BOARDS", ""))
+    my_repo = os.environ.get("GITHUB_REPOSITORY", "user/repo")
+    suffix = os.environ.get("PACKAGER_SUFFIX", "trimmed")
+    return platform_name, json_url, targets, my_repo, suffix
 
-def fetch_json(json_url):
-    print(f"Downloading {json_url}...")
-    req = urllib.request.Request(json_url, headers={'User-Agent': 'Mozilla/5.0'})
-    with urllib.request.urlopen(req) as response:
-        return json.loads(response.read().decode('utf-8'))
 
-def main():
-    if len(sys.argv) < 2 or sys.argv[1] not in ['--get-version', '--build']:
-        print("Usage: python filter_core.py [--get-version | --build]")
-        sys.exit(1)
-        
-    mode = sys.argv[1]
-    platform_name, json_url, target_boards, my_repo = get_env_vars(mode)
+def cache_path(platform_name):
+    return os.path.join(os.getcwd(), f"upstream_{platform_name}_index.json")
 
+
+def mode_matrix():
+    config = load_config()
+    include = [
+        {
+            "platform": p["platform"],
+            "json_url": p["json_url"],
+            "targets": p["targets"],
+        }
+        for p in config["platforms"]
+    ]
+    print(json.dumps({"include": include}))
+
+
+def mode_get_version():
+    platform_name, json_url, _, _, _ = get_env()
     data = fetch_json(json_url)
+    latest = latest_platform_entry(data)
+    version = latest["version"]
 
-    platforms = data['packages'][0]['platforms']
-    latest_platform = max(platforms, key=lambda p: parse_version(p['version']))
-    version = latest_platform['version']
+    # --build と同じ index を使うようキャッシュ (TOCTOU 対策)
+    with open(cache_path(platform_name), "w", encoding="utf-8") as f:
+        json.dump(data, f)
 
-    if mode == '--get-version':
-        if "GITHUB_OUTPUT" in os.environ:
-            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-                f.write(f"version={version}\n")
-        else:
-            print(f"version={version}")
+    out = os.environ.get("GITHUB_OUTPUT")
+    if out:
+        with open(out, "a") as f:
+            f.write(f"version={version}\n")
+    print(f"version={version}")
+
+
+def mode_build():
+    platform_name, json_url, target_boards, my_repo, suffix = get_env()
+
+    cached = cache_path(platform_name)
+    if os.path.exists(cached):
+        print(f"Using cached upstream index: {cached}")
+        with open(cached, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    else:
+        data = fetch_json(json_url)
+
+    latest = copy.deepcopy(latest_platform_entry(data))
+    version = latest["version"]
+    print(f"Latest version: {version}  (platform={platform_name}, "
+          f"mode={'filter' if target_boards else 'mirror'})")
+
+    # 配信 JSON は最新1バージョンのみに絞る
+    data["packages"][0]["platforms"] = [latest]
+    original_packager, new_packager = rename_packager(data, suffix)
+    print(f"Packager renamed: {original_packager} -> {new_packager}")
+
+    if not target_boards:
+        # ミラーモード: 再パッケージせず元アーカイブをそのまま参照する
+        mark_trimmed(latest, mirror=True)
+        write_index(data, platform_name)
+        print("Mirror mode: original archive URL and checksum kept as-is. "
+              "No release asset needed.")
         return
 
-    # --build mode
-    print(f"Latest version: {version}")
-
-    download_url = latest_platform.get('url')
-    if not download_url and 'systems' in latest_platform:
-        download_url = latest_platform['systems'][0]['url']
-
-    archive_name = download_url.split('/')[-1]
+    download_url = latest.get("url")
+    if not download_url:
+        raise SystemExit("ERROR: platform entry has no 'url' field")
+    archive_name = download_url.split("/")[-1]
 
     with tempfile.TemporaryDirectory() as tmpdir:
         archive_path = os.path.join(tmpdir, archive_name)
-        print(f"Downloading archive from {download_url}...")
-
-        req_arch = urllib.request.Request(download_url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req_arch) as response, open(archive_path, 'wb') as out_file:
-            shutil.copyfileobj(response, out_file)
+        download_file(download_url, archive_path)
+        verify_checksum(archive_path, latest.get("checksum"))
 
         print("Extracting archive...")
-        if archive_name.endswith('.zip'):
-            import zipfile
-            with zipfile.ZipFile(archive_path, 'r') as zip_ref:
-                zip_ref.extractall(tmpdir)
-        else:
-            with tarfile.open(archive_path, 'r:gz') as tar:
-                tar.extractall(path=tmpdir)
+        extract_archive(archive_path, tmpdir)
+        extracted_dir = find_extracted_dir(tmpdir, archive_name)
 
-        extracted_dir = None
-        for name in os.listdir(tmpdir):
-            if name != archive_name and os.path.isdir(os.path.join(tmpdir, name)):
-                extracted_dir = os.path.join(tmpdir, name)
-                break
-
-        if not extracted_dir:
-            raise Exception("Could not find extracted directory.")
-
-        boards_txt_path = os.path.join(extracted_dir, 'boards.txt')
+        boards_txt_path = os.path.join(extracted_dir, "boards.txt")
         if not os.path.exists(boards_txt_path):
-            raise Exception("boards.txt not found inside the archive.")
+            raise SystemExit("ERROR: boards.txt not found inside the archive")
 
         print("Filtering boards.txt...")
-        with open(boards_txt_path, 'r', encoding='utf-8') as f:
+        with open(boards_txt_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
 
-        filtered_lines = []
-        kept_board_names = set()
-        for line in lines:
-            stripped = line.strip()
-            if not stripped:
-                filtered_lines.append(line)
-            elif stripped.startswith('#'):
-                filtered_lines.append(line)
-            elif stripped.startswith('menu.'):
-                filtered_lines.append(line)
-            else:
-                board_id = stripped.split('.')[0]
-                if not target_boards or board_id in target_boards:
-                    filtered_lines.append(line)
-                    if stripped.startswith(f"{board_id}.name="):
-                        kept_board_names.add(stripped.split('=', 1)[1].strip())
+        filtered, kept_names, seen_ids = filter_boards_txt(lines, target_boards)
+        validate_targets(target_boards, seen_ids, platform_name)
+        print(f"Kept {len(kept_names)} boards: {', '.join(sorted(kept_names))}")
 
-        with open(boards_txt_path, 'w', encoding='utf-8') as f:
-            f.writelines(filtered_lines)
+        with open(boards_txt_path, "w", encoding="utf-8") as f:
+            f.writelines(filtered)
 
-        print("Recompressing archive...")
-        new_archive_name = f'custom-{platform_name}-{version}.tar.gz'
+        print("Creating reproducible archive...")
+        new_archive_name = f"custom-{platform_name}-{version}.tar.gz"
         new_archive_path = os.path.join(os.getcwd(), new_archive_name)
+        create_reproducible_targz(extracted_dir, new_archive_path,
+                                  os.path.basename(extracted_dir))
 
-        root_dir_name = os.path.basename(extracted_dir)
-        with tarfile.open(new_archive_path, 'w:gz') as tar:
-            tar.add(extracted_dir, arcname=root_dir_name)
-
-        print("Calculating hash and size...")
         size = os.path.getsize(new_archive_path)
-        with open(new_archive_path, 'rb') as f:
-            sha256_hash = hashlib.sha256(f.read()).hexdigest()
+        digest = sha256_of(new_archive_path)
+        print(f"Size: {size}, SHA-256: {digest}")
 
-        print(f"Size: {size}, SHA-256: {sha256_hash}")
+        latest["archiveFileName"] = new_archive_name
+        latest["checksum"] = f"SHA-256:{digest}"
+        latest["size"] = str(size)
+        latest["url"] = (f"https://github.com/{my_repo}/releases/download/"
+                         f"{platform_name}-{version}/{new_archive_name}")
+        mark_trimmed(latest)
 
-        print("Updating JSON...")
-        # Keep only the latest version in the JSON
-        data['packages'][0]['platforms'] = [latest_platform]
+        if "boards" in latest:
+            latest["boards"] = [b for b in latest["boards"] if b.get("name") in kept_names]
 
-        latest_platform['archiveFileName'] = new_archive_name
-        latest_platform['checksum'] = f'SHA-256:{sha256_hash}'
-        latest_platform['size'] = str(size)
-        latest_platform['url'] = f'https://github.com/{my_repo}/releases/download/{platform_name}-{version}/{new_archive_name}'
+        write_index(data, platform_name)
+        print(f"Done. Saved {new_archive_name}")
 
-        if 'boards' in latest_platform:
-            if target_boards:
-                latest_platform['boards'] = [b for b in latest_platform['boards'] if b.get('name') in kept_board_names]
-            # If target_boards is empty, we keep the original boards array intact
 
-        out_json = f'package_custom_{platform_name}_index.json'
-        with open(out_json, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2)
+def write_index(data, platform_name):
+    out_json = f"package_custom_{platform_name}_index.json"
+    with open(out_json, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    print(f"Saved {out_json}")
 
-        print(f"Done. Saved {new_archive_name} and {out_json}")
 
-if __name__ == '__main__':
+def main():
+    modes = {
+        "--matrix": mode_matrix,
+        "--get-version": mode_get_version,
+        "--build": mode_build,
+    }
+    if len(sys.argv) < 2 or sys.argv[1] not in modes:
+        print(f"Usage: python filter_core.py [{' | '.join(modes)}]")
+        sys.exit(1)
+    modes[sys.argv[1]]()
+
+
+if __name__ == "__main__":
     main()
