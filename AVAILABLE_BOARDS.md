@@ -1,6 +1,6 @@
 # Available Boards
 
-フォークして独自にカスタマイズする際、`.github/workflows/sync.yml` の `targets` に以下の **Board ID** をカンマ区切りで指定してください。
+フォークして独自にカスタマイズする際、`platforms.yml` の `targets` に以下の **Board ID** をカンマ区切りで指定してください。
 
 ## RP2040
 
