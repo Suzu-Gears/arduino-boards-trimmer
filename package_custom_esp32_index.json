@@ -1,7 +1,7 @@
 {
   "packages": [
     {
-      "name": "esp32",
+      "name": "esp32-trimmed",
       "maintainer": "Espressif Systems",
       "websiteURL": "https://github.com/espressif/arduino-esp32",
       "email": "hristo@espressif.com",
@@ -10,56 +10,56 @@
       },
       "platforms": [
         {
-          "name": "esp32",
+          "name": "esp32 (Trimmed)",
           "architecture": "esp32",
           "version": "3.3.11",
           "category": "ESP32",
           "url": "https://github.com/Suzu-Gears/arduino-boards-trimmer/releases/download/esp32-3.3.11/custom-esp32-3.3.11.tar.gz",
           "archiveFileName": "custom-esp32-3.3.11.tar.gz",
-          "checksum": "SHA-256:6090ca42c39f53f93fd493dd779ceb126402ce4b38538b0fcb4c9b076c33d1b9",
-          "size": "45111216",
+          "checksum": "SHA-256:b3f56fc3bd7d5378168ec023c58240c5a31a29f30a1a8aaac222315607af71ee",
+          "size": "45009816",
           "help": {
             "online": ""
           },
           "boards": [],
           "toolsDependencies": [
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp-x32",
               "version": "2601"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "xtensa-esp-elf-gdb",
               "version": "17.1_20260402"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp-rv32",
               "version": "2601"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "riscv32-esp-elf-gdb",
               "version": "17.1_20260402"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "openocd-esp32",
               "version": "v0.12.0-esp32-20260424"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esptool_py",
               "version": "5.3.1"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "mkspiffs",
               "version": "0.2.3"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "mklittlefs",
               "version": "4.0.2-db0513a"
             },
@@ -69,47 +69,47 @@
               "version": "0.11.0-arduino5"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp32-libs",
               "version": "3.3.11"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp32c3-libs",
               "version": "3.3.11"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp32c5-libs",
               "version": "3.3.11"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp32c6-libs",
               "version": "3.3.11"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp32h2-libs",
               "version": "3.3.11"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp32p4-libs",
               "version": "3.3.11"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp32p4_es-libs",
               "version": "3.3.11"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp32s2-libs",
               "version": "3.3.11"
             },
             {
-              "packager": "esp32",
+              "packager": "esp32-trimmed",
               "name": "esp32s3-libs",
               "version": "3.3.11"
             }
