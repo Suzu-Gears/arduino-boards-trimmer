@@ -4,7 +4,7 @@
 
 ## RP2040
 
-Based on release version `6.0.0`
+Based on release version `6.1.0`
 
 | Board Name | Board ID |
 | --- | --- |
@@ -122,6 +122,7 @@ Based on release version `6.0.0`
 | Solder Party RP2350 Stamp | `solderparty_rp2350_stamp` |
 | Solder Party RP2350 Stamp XL | `solderparty_rp2350_stamp_xl` |
 | Soldered Electronics NULA Ethernet W55RP20 | `soldered_nula_ethernet_w55rp20` |
+| Soldered Electronics NULA Node | `soldered_nula_node_rp2040` |
 | Soldered Electronics NULA RP2350 | `soldered_nula_rp2350` |
 | SparkFun IoT Node LoRaWAN | `sparkfun_iotnode_lorawanrp2350` |
 | SparkFun IoT RedBoard RP2350 | `sparkfun_iotredboard_rp2350` |
