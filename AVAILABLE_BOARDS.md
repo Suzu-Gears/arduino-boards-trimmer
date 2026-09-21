@@ -162,7 +162,7 @@ Based on release version `6.1.0`
 
 ## ESP32
 
-Based on release version `3.3.11`
+Based on release version `3.3.12`
 
 | Board Name | Board ID |
 | --- | --- |
@@ -230,6 +230,7 @@ Based on release version `3.3.11`
 | Connaxio's Espoir | `connaxio_espoir` |
 | Crabik Slot ESP32-S3 | `crabik_slot_esp32_s3` |
 | CYOBOT V2 ESP32S3 | `cyobot_v2_esp32s3` |
+| Cytron Maker ESP32 | `cytron_maker_esp32` |
 | Cytron Maker Feather AIoT S3 | `cytron_maker_feather_aiot_s3` |
 | D-duino-32 | `d-duino-32` |
 | Deneyap Kart | `deneyapkart` |
@@ -255,6 +256,7 @@ Based on release version `3.3.11`
 | Dongsen Tech Pocket 32 | `pocket_32` |
 | DPTechnics Walter | `walter` |
 | DPU ESP32 | `dpu_esp32` |
+| Edge Dalton (ESP32C3) | `edge_dalton` |
 | Edgebox-ESP-100 | `Edgebox-ESP-100` |
 | Elecrow CrowPanel 7.0P | `elecrow_crowpanel_7` |
 | Electronic SweetPeas - ESP320 | `esp320` |
@@ -440,6 +442,7 @@ Based on release version `3.3.11`
 | Piranha ESP-32 | `piranha_esp-32` |
 | ProtoCentral HealthyPi 4 | `healthypi4` |
 | Pycom GPy | `gpy` |
+| Raiden S0-1 | `raiden_s01` |
 | RAKwireless RAK3112 | `rakwireless_rak3112` |
 | RedPill(+) ESP32-S3 | `redpill_esp32s3` |
 | RoboHeart Hercules | `roboheart_hercules` |
@@ -513,6 +516,8 @@ Based on release version `3.3.11`
 | ViraLink Gate32-1.1 | `viralink32g11` |
 | Watchy | `watchy` |
 | Waveshare ESP32-C3-Zero | `waveshare_esp32_c3_zero` |
+| Waveshare ESP32-C5-LCD-1.47 | `waveshare_esp32_c5_lcd_1_47` |
+| Waveshare ESP32-C5-Zero | `waveshare_esp32_c5_zero` |
 | Waveshare ESP32-C6-Zero | `waveshare_esp32_c6_zero` |
 | Waveshare ESP32-P4-POE-ETH | `waveshare_p4_poe_eth` |
 | Waveshare ESP32-S3-LCD-1.46 | `waveshare_esp32_s3_lcd_146` |
@@ -521,6 +526,7 @@ Based on release version `3.3.11`
 | Waveshare ESP32-S3-LCD-1.85 | `waveshare_esp32_s3_lcd_185` |
 | Waveshare ESP32-S3-Matrix | `ws_esp32_s3_matrix` |
 | Waveshare ESP32-S3-Relay-6CH | `waveshare_esp32_s3_relay_6ch` |
+| Waveshare ESP32-S3-RGB-Matrix | `waveshare_esp32_s3_rgb_matrix` |
 | Waveshare ESP32-S3-Touch-AMOLED-1.43 | `waveshare_esp32_s3_touch_amoled_143` |
 | Waveshare ESP32-S3-Touch-AMOLED-1.64 | `waveshare_esp32_s3_touch_amoled_164` |
 | Waveshare ESP32-S3-Touch-AMOLED-1.8 | `waveshare_esp32_s3_touch_amoled_18` |
@@ -536,9 +542,11 @@ Based on release version `3.3.11`
 | Waveshare ESP32-S3-Touch-LCD-4 | `waveshare_esp32_s3_touch_lcd_4` |
 | Waveshare ESP32-S3-Touch-LCD-4.3 | `waveshare_esp32_s3_touch_lcd_43` |
 | Waveshare ESP32-S3-Touch-LCD-4.3B | `waveshare_esp32_s3_touch_lcd_43B` |
+| Waveshare ESP32-S3-Touch-LCD-4.3C | `waveshare_esp32_s3_touch_lcd_43C` |
 | Waveshare ESP32-S3-Touch-LCD-5 | `waveshare_esp32_s3_touch_lcd_5` |
 | Waveshare ESP32-S3-Touch-LCD-5B | `waveshare_esp32_s3_touch_lcd_5B` |
 | Waveshare ESP32-S3-Touch-LCD-7 | `waveshare_esp32_s3_touch_lcd_7` |
+| Waveshare ESP32-S3-Touch-LCD-7C-BOX | `waveshare_esp32_s3_touch_lcd_7c` |
 | Waveshare ESP32-S3-Zero | `waveshare_esp32_s3_zero` |
 | Waveshare ESP32S3 Touch LCD 128 | `waveshare_esp32s3_touch_lcd_128` |
 | WeAct Studio ESP32C3 | `weact_studio_esp32c3` |
