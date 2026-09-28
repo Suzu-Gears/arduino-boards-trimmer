@@ -4,7 +4,7 @@
 
 ## RP2040
 
-Based on release version `6.1.0`
+Based on release version `6.1.1`
 
 | Board Name | Board ID |
 | --- | --- |
@@ -145,10 +145,12 @@ Based on release version `6.1.0`
 | Waveshare RP2040 PiZero | `waveshare_rp2040_pizero` |
 | Waveshare RP2040 Plus | `waveshare_rp2040_plus` |
 | Waveshare RP2040 Zero | `waveshare_rp2040_zero` |
+| Waveshare RP2350 Core | `waveshare_rp2350_core` |
 | Waveshare RP2350 LCD 0.96 | `waveshare_rp2350_lcd_0_96` |
 | Waveshare RP2350 PiZero | `waveshare_rp2350_pizero` |
 | Waveshare RP2350 Plus | `waveshare_rp2350_plus` |
 | Waveshare RP2350 Zero | `waveshare_rp2350_zero` |
+| Waveshare RP2350-POE-ETH | `waveshare_rp2350_poe_eth` |
 | Waveshare RP2350B Plus W | `waveshare_rp2350b_plus_w` |
 | WeAct Studio RP2350B Core Board | `weact_rp2350b` |
 | WIZnet W5100S-EVB-Pico | `wiznet_5100s_evb_pico` |
