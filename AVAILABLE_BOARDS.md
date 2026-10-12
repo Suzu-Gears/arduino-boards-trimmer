@@ -4,7 +4,7 @@
 
 ## RP2040
 
-Based on release version `6.2.0`
+Based on release version `6.3.0`
 
 | Board Name | Board ID |
 | --- | --- |
@@ -73,6 +73,7 @@ Based on release version `6.2.0`
 | iLabs Challenger 2350 NB-IoT | `challenger_2350_nbiot` |
 | iLabs Challenger 2350 WiFi/BLE | `challenger_2350_wifi6_ble5` |
 | iLabs Challenger NB 2040 WiFi | `challenger_nb_2040_wifi` |
+| iLabs Challenger ZP 2350 LoRa | `challenger_zp_2350_lora` |
 | iLabs Connectivity 2040 LTE/WiFi/BLE | `connectivity_2040_lte_wifi_ble` |
 | iLabs CPico 2350 | `ilabs_cpico_2350` |
 | iLabs RPICO32 | `ilabs_rpico32` |
