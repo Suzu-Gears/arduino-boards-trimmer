@@ -4,7 +4,7 @@
 
 ## RP2040
 
-Based on release version `6.3.0`
+Based on release version `6.3.1`
 
 | Board Name | Board ID |
 | --- | --- |
@@ -45,6 +45,7 @@ Based on release version `6.3.0`
 | Cytron IRIV IO Controller | `cytron_iriv_io_controller` |
 | Cytron Maker Nano RP2040 | `cytron_maker_nano_rp2040` |
 | Cytron Maker Pi RP2040 | `cytron_maker_pi_rp2040` |
+| Cytron Maker Sumo RP2350 | `cytron_maker_sumo_rp2350` |
 | Cytron Maker Uno RP2040 | `cytron_maker_uno_rp2040` |
 | Cytron Motion 2350 Pro | `cytron_motion_2350_pro` |
 | DatanoiseTV PicoADK | `datanoisetv_picoadk` |
