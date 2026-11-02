@@ -4,7 +4,7 @@
 
 ## RP2040
 
-Based on release version `6.3.1`
+Based on release version `6.3.2`
 
 | Board Name | Board ID |
 | --- | --- |
