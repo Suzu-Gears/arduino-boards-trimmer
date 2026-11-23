@@ -4,7 +4,7 @@
 
 ## RP2040
 
-Based on release version `6.3.2`
+Based on release version `6.4.0`
 
 | Board Name | Board ID |
 | --- | --- |
@@ -42,6 +42,7 @@ Based on release version `6.3.2`
 | Breadstick Raspberry | `breadstick_raspberry` |
 | BridgeTek IDM2040-43A | `bridgetek_idm2040_43a` |
 | BridgeTek IDM2040-7A | `bridgetek_idm2040_7a` |
+| CHIRP Audio Trigger | `chirp_audio_trigger` |
 | Cytron IRIV IO Controller | `cytron_iriv_io_controller` |
 | Cytron Maker Nano RP2040 | `cytron_maker_nano_rp2040` |
 | Cytron Maker Pi RP2040 | `cytron_maker_pi_rp2040` |
@@ -166,7 +167,7 @@ Based on release version `6.3.2`
 
 ## ESP32
 
-Based on release version `3.3.12`
+Based on release version `4.0.0`
 
 | Board Name | Board ID |
 | --- | --- |
@@ -187,6 +188,7 @@ Based on release version `3.3.12`
 | Adafruit ItsyBitsy ESP32 | `adafruit_itsybitsy_esp32` |
 | Adafruit MagTag 2.9" | `adafruit_magtag29_esp32s2` |
 | Adafruit MatrixPortal ESP32-S3 | `adafruit_matrixportal_esp32s3` |
+| Adafruit Metro ESP32-P4 | `adafruit_metro_esp32p4` |
 | Adafruit Metro ESP32-S2 | `adafruit_metro_esp32s2` |
 | Adafruit Metro ESP32-S3 | `adafruit_metro_esp32s3` |
 | Adafruit pyCamera S3 | `adafruit_camera_esp32s3` |
@@ -264,6 +266,7 @@ Based on release version `3.3.12`
 | Edgebox-ESP-100 | `Edgebox-ESP-100` |
 | Elecrow CrowPanel 7.0P | `elecrow_crowpanel_7` |
 | Electronic SweetPeas - ESP320 | `esp320` |
+| ELEGOO-ESP32-C6 | `elegoo_esp32c6` |
 | ES Developer ES32Lab | `es32lab` |
 | ESP-C3-M1-I-Kit | `esp32c3m1IKit` |
 | ESP32 Dev Module | `esp32` |
@@ -290,9 +293,11 @@ Based on release version `3.3.12`
 | ESP32S3 CAM LCD | `esp32s3camlcd` |
 | ESP32S3 Dev Module | `esp32s3` |
 | ESP32S3 Dev Module Octal (WROOM2) | `esp32s3-octal` |
+| ESP32S31 Dev Module | `esp32s31` |
 | ESP32vn IoT Uno | `esp32vn-iot-uno` |
 | ESPea32 | `espea32` |
 | ESPectro32 | `espectro32` |
+| Espressif ESP-Mosaico V1.2 | `esp_mosaico` |
 | ET-Board | `ET-Board` |
 | FED4 | `fed4` |
 | FireBeetle 2 ESP32-E | `dfrobot_firebeetle2_esp32e` |
@@ -346,8 +351,9 @@ Based on release version `3.3.12`
 | IOXESP32PS | `ioxesp32ps` |
 | KB32-FT | `kb32` |
 | KITS ESP32 EDU | `kits-edu` |
-| kode dot | `kodedot` |
+| Kode Dot | `kodedot` |
 | Labplus mPython | `mPython` |
+| LilyGo T-Deck | `lilygo_tdeck` |
 | LilyGo T-Display | `lilygo_t_display` |
 | LilyGo T-Display-S3 | `lilygo_t_display_s3` |
 | LilyGo T-ETH-Lite | `lilygo_t_eth_lite` |
@@ -398,6 +404,7 @@ Based on release version `3.3.12`
 | MagicBit | `magicbit` |
 | MakerGO ESP32 C3 SuperMini | `makergo_c3_supermini` |
 | MakerGO ESP32 C6 SuperMini | `makergo_c6_supermini` |
+| mannaNAUTA | `mannanauta` |
 | Metro ESP-32 | `metro_esp-32` |
 | MGBOT IOTIK 32A | `mgbot-iotik32a` |
 | MGBOT IOTIK 32B | `mgbot-iotik32b` |
@@ -442,6 +449,7 @@ Based on release version `3.3.12`
 | Pcbcupid GLYPH C6 | `Pcbcupid_GLYPH_C6` |
 | Pcbcupid GLYPH H2 | `Pcbcupid_GLYPH_H2` |
 | Pcbcupid GLYPH S3 | `Pcbcupid_GLYPH_S3` |
+| Pcbcupid GLYPH S3 Lucid | `pcbcupid_s3_lucid` |
 | Pcbcupid GLYPH S3 PSRAM | `Pcbcupid_GLYPH_S3_PSRAM` |
 | Piranha ESP-32 | `piranha_esp-32` |
 | ProtoCentral HealthyPi 4 | `healthypi4` |
@@ -457,6 +465,7 @@ Based on release version `3.3.12`
 | Senses's WEIZEN | `sensesiot_weizen` |
 | Silicognition ManT1S | `mant1s` |
 | Silicognition wESP32 | `wesp32` |
+| Soldered NULA CAN ESP32S3 | `soldered_nula_can_esp32s3` |
 | Soldered NULA DeepSleep ESP32S3 | `soldered_nula_deepsleep_esp32s3` |
 | Soldered NULA Dual ESP32C5 | `soldered_nula_dual_esp32c5` |
 | Soldered NULA Mini ESP32C6 | `soldered_nula_mini_esp32c6` |
@@ -471,6 +480,8 @@ Based on release version `3.3.12`
 | SparkFun ESP32-C6 Thing Plus | `sparkfun_esp32c6_thing_plus` |
 | SparkFun ESP32-S2 Thing Plus | `sparkfun_esp32s2_thing_plus` |
 | SparkFun ESP32-S3 Thing Plus | `sparkfun_esp32s3_thing_plus` |
+| SparkFun IoT RedBoard - ESP32-P4 (PoE) | `sparkfun_esp32p4_iot_redboard_poe` |
+| SparkFun IoT RedBoard - ESP32-P4 (WiFi/BLE) | `sparkfun_esp32p4_iot_redboard_wifi` |
 | SparkFun LoRa Gateway 1-Channel | `sparkfun_lora_gateway_1-channel` |
 | SparkFun Pro Micro - ESP32C3 | `sparkfun_pro_micro_esp32c3` |
 | T-Beam | `t-beam` |
@@ -564,6 +575,12 @@ Based on release version `3.3.12`
 | WiFiduino32S3 | `wifiduino32s3` |
 | WiFiduinoV2 | `wifiduino32c3` |
 | WiPy 3.0 | `wipy3` |
+| Wireless-Tag WT9932C3-TINY | `wt9932c3_tiny` |
+| Wireless-Tag WT9932C5-TINY | `wt9932c5_tiny` |
+| Wireless-Tag WT9932P4-TINY | `wt9932p4_tiny` |
+| Wireless-Tag WT9932P4C61-TINY | `wt9932p4c61_tiny` |
+| Wireless-Tag WT9932P4X-TINY | `wt9932p4x_tiny` |
+| Wireless-Tag WT9932S31-TINY | `wt9932s31_tiny` |
 | WT32-ETH01 Ethernet Module | `wt32-eth01` |
 | WT32-SC01 PLUS | `wt32-sc01-plus` |
 | XIAO_ESP32C3 | `XIAO_ESP32C3` |
@@ -579,6 +596,7 @@ Based on release version `3.3.12`
 | YelloByte YB-ESP32-S3-DAC | `yb_esp32s3_dac` |
 | YelloByte YB-ESP32-S3-DRV | `yb_esp32s3_drv` |
 | YelloByte YB-ESP32-S3-ETH | `yb_esp32s3_eth` |
+| YelloByte YB-ESP32-S3-RS485 | `yb_esp32s3_rs485` |
 
 ## BLUEPAD32
 
